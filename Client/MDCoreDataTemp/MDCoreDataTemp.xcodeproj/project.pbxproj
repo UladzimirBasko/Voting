@@ -20,10 +20,11 @@
 		E790A4061DE7428300F35A55 /* MDCoreData.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E790A4031DE7428300F35A55 /* MDCoreData.framework */; };
 		E790A4071DE7428300F35A55 /* MDReporter.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E790A4041DE7428300F35A55 /* MDReporter.framework */; };
 		E790A4081DE7428300F35A55 /* MKResourceManager.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E790A4051DE7428300F35A55 /* MKResourceManager.framework */; };
-		E790A40C1DE744A900F35A55 /* TestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = E790A40B1DE744A900F35A55 /* TestModel.m */; };
 		E79231701DF002A6002DA179 /* EntitiesStorage.m in Sources */ = {isa = PBXBuildFile; fileRef = E792316F1DF002A6002DA179 /* EntitiesStorage.m */; };
-		E7AB91F21DE822E100E75216 /* TestDataProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AB91F11DE822E100E75216 /* TestDataProvider.m */; };
-		E7AB91F51DE826C200E75216 /* TestWork.m in Sources */ = {isa = PBXBuildFile; fileRef = E7AB91F41DE826C200E75216 /* TestWork.m */; };
+		E7EE91651DF481FF0023EC3A /* VotingService.m in Sources */ = {isa = PBXBuildFile; fileRef = E7EE91641DF481FF0023EC3A /* VotingService.m */; };
+		E7EE916C1DF483F20023EC3A /* TestDataProvider.m in Sources */ = {isa = PBXBuildFile; fileRef = E7EE91671DF483F20023EC3A /* TestDataProvider.m */; };
+		E7EE916D1DF483F20023EC3A /* TestModel.m in Sources */ = {isa = PBXBuildFile; fileRef = E7EE91691DF483F20023EC3A /* TestModel.m */; };
+		E7EE916E1DF483F20023EC3A /* TestWork.m in Sources */ = {isa = PBXBuildFile; fileRef = E7EE916B1DF483F20023EC3A /* TestWork.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -48,14 +49,16 @@
 		E790A4031DE7428300F35A55 /* MDCoreData.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MDCoreData.framework; path = Carthage/Build/iOS/MDCoreData.framework; sourceTree = "<group>"; };
 		E790A4041DE7428300F35A55 /* MDReporter.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MDReporter.framework; path = Carthage/Build/iOS/MDReporter.framework; sourceTree = "<group>"; };
 		E790A4051DE7428300F35A55 /* MKResourceManager.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = MKResourceManager.framework; path = Carthage/Build/iOS/MKResourceManager.framework; sourceTree = "<group>"; };
-		E790A40A1DE744A900F35A55 /* TestModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestModel.h; sourceTree = "<group>"; };
-		E790A40B1DE744A900F35A55 /* TestModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestModel.m; sourceTree = "<group>"; };
 		E792316E1DF002A6002DA179 /* EntitiesStorage.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EntitiesStorage.h; sourceTree = "<group>"; };
 		E792316F1DF002A6002DA179 /* EntitiesStorage.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EntitiesStorage.m; sourceTree = "<group>"; };
-		E7AB91F01DE822E100E75216 /* TestDataProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestDataProvider.h; sourceTree = "<group>"; };
-		E7AB91F11DE822E100E75216 /* TestDataProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestDataProvider.m; sourceTree = "<group>"; };
-		E7AB91F31DE826C200E75216 /* TestWork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestWork.h; sourceTree = "<group>"; };
-		E7AB91F41DE826C200E75216 /* TestWork.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestWork.m; sourceTree = "<group>"; };
+		E7EE91631DF481FF0023EC3A /* VotingService.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = VotingService.h; sourceTree = "<group>"; };
+		E7EE91641DF481FF0023EC3A /* VotingService.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = VotingService.m; sourceTree = "<group>"; };
+		E7EE91661DF483F20023EC3A /* TestDataProvider.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestDataProvider.h; sourceTree = "<group>"; };
+		E7EE91671DF483F20023EC3A /* TestDataProvider.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestDataProvider.m; sourceTree = "<group>"; };
+		E7EE91681DF483F20023EC3A /* TestModel.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestModel.h; sourceTree = "<group>"; };
+		E7EE91691DF483F20023EC3A /* TestModel.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestModel.m; sourceTree = "<group>"; };
+		E7EE916A1DF483F20023EC3A /* TestWork.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = TestWork.h; sourceTree = "<group>"; };
+		E7EE916B1DF483F20023EC3A /* TestWork.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = TestWork.m; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -85,6 +88,12 @@
 		E73BF2E71DF45E1800A05C35 /* Model */ = {
 			isa = PBXGroup;
 			children = (
+				E7EE91661DF483F20023EC3A /* TestDataProvider.h */,
+				E7EE91671DF483F20023EC3A /* TestDataProvider.m */,
+				E7EE91681DF483F20023EC3A /* TestModel.h */,
+				E7EE91691DF483F20023EC3A /* TestModel.m */,
+				E7EE916A1DF483F20023EC3A /* TestWork.h */,
+				E7EE916B1DF483F20023EC3A /* TestWork.m */,
 			);
 			path = Model;
 			sourceTree = "<group>";
@@ -92,6 +101,8 @@
 		E73BF2E81DF45E1800A05C35 /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				E7EE91631DF481FF0023EC3A /* VotingService.h */,
+				E7EE91641DF481FF0023EC3A /* VotingService.m */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -149,12 +160,6 @@
 				E790A3F91DE7401100F35A55 /* LaunchScreen.storyboard */,
 				E790A3FC1DE7401100F35A55 /* Info.plist */,
 				E790A3E81DE7401000F35A55 /* Supporting Files */,
-				E790A40A1DE744A900F35A55 /* TestModel.h */,
-				E790A40B1DE744A900F35A55 /* TestModel.m */,
-				E7AB91F01DE822E100E75216 /* TestDataProvider.h */,
-				E7AB91F11DE822E100E75216 /* TestDataProvider.m */,
-				E7AB91F31DE826C200E75216 /* TestWork.h */,
-				E7AB91F41DE826C200E75216 /* TestWork.m */,
 				E792316E1DF002A6002DA179 /* EntitiesStorage.h */,
 				E792316F1DF002A6002DA179 /* EntitiesStorage.m */,
 			);
@@ -271,14 +276,15 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E790A40C1DE744A900F35A55 /* TestModel.m in Sources */,
+				E7EE916E1DF483F20023EC3A /* TestWork.m in Sources */,
 				E73BF2FA1DF469BC00A05C35 /* TPKeyboardAvoidingTableView.m in Sources */,
 				E790A3ED1DE7401100F35A55 /* AppDelegate.m in Sources */,
+				E7EE916D1DF483F20023EC3A /* TestModel.m in Sources */,
 				E73BF2F81DF469BC00A05C35 /* TPKeyboardAvoidingCollectionView.m in Sources */,
 				E79231701DF002A6002DA179 /* EntitiesStorage.m in Sources */,
 				E73BF2FB1DF469BC00A05C35 /* UIScrollView+TPKeyboardAvoidingAdditions.m in Sources */,
-				E7AB91F51DE826C200E75216 /* TestWork.m in Sources */,
-				E7AB91F21DE822E100E75216 /* TestDataProvider.m in Sources */,
+				E7EE91651DF481FF0023EC3A /* VotingService.m in Sources */,
+				E7EE916C1DF483F20023EC3A /* TestDataProvider.m in Sources */,
 				E73BF2F91DF469BC00A05C35 /* TPKeyboardAvoidingScrollView.m in Sources */,
 				E790A3EA1DE7401100F35A55 /* main.m in Sources */,
 				E73BF2EC1DF45EEA00A05C35 /* RegistrationController.m in Sources */,
