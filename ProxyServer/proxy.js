@@ -19,7 +19,12 @@ fs.readFile('iplist.txt', 'utf8', function(err, data) {
 })
 
 function proxiedAddress(senderIp) {
-    var lastOktet = senderIp.split('.').pop();
+   var lastOktet
+   if(senderIp.indexOf('.') > -1) {
+    lastOktet = senderIp.split('.').pop();
+   }else {
+    lastOktet = senderIp.split(':').pop();
+   }
     var oktetDigit = parseInt(lastOktet, 10);
     var index = oktetDigit % iplist.length;
     return iplist[index];
@@ -30,7 +35,12 @@ var server = http.createServer();
 server.on('request', function(request, response) {
 
     var clientIp = reqIp.getClientIp(request);
-    var ipAddr = proxiedAddress(clientIp);
+    var ipAddr;
+    if(clientIp) {
+	ipAddr = proxiedAddress(clientIp);
+    }else {
+	ipAddr = iplist[0];
+    }
 
     var ph = url.parse(request.url);
     var options = {
