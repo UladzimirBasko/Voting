@@ -6,12 +6,14 @@ var reqIp = require('request-ip')
 var iplist = [];
 
 fs.readFile('iplist.txt', 'utf8', function(err, data) {
-    var addresses = data.split('\r\n').filter(function(rx) { return rx.length });
+    var addresses = data.split(';').filter(function(rx) { return rx.length });
     addresses.forEach(function(address, index) {
         var splitedAddress = address.split(':');
+        var portAndPath = splitedAddress[1].split('/');
         var ipAddr = {};
         ipAddr.ip = splitedAddress[0];
-        ipAddr.port = splitedAddress[1];
+        ipAddr.port = portAndPath[0];
+        ipAddr.path = portAndPath[1];
         iplist.push(ipAddr);
     })
 })
@@ -35,7 +37,7 @@ server.on('request', function(request, response) {
         port : ipAddr.port,
         hostname : ipAddr.ip,
         method : ph.method,
-        path : ph.path,
+        path : "/" + ipAddr.path + ph.path,
         headers : ph.headers
     }
     var proxyRequest = http.request(options);
