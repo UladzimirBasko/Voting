@@ -45,7 +45,7 @@ server.on('request', function(request, response) {
     var options = {
         port : ipAddr.port,
         hostname : ipAddr.ip,
-        method : ph.method,
+        method : request.method,
         path : "/" + ipAddr.path + ph.path,
         headers : ph.headers
     }

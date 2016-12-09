@@ -1,1 +1,1 @@
-localhost:3000/region1;192.168.1.60:3000/region2
+localhost:8085/matfaq1;localhost:8085/matfaq2
