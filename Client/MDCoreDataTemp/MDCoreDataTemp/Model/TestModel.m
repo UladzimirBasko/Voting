@@ -6,28 +6,31 @@
 //  Copyright © 2016 senla. All rights reserved.
 //
 
-#import "TestModel.h"
 #import <MDCoreData/MDEntityCachePolicy.h>
+#import "TestModel.h"
 
-@implementation ParentEntity
+@implementation Participant
 
 @dynamic idProp;
 @dynamic name;
-@dynamic aboutDescription;
-@dynamic versionProp;
-@dynamic isValidProp;
-@dynamic relatedEntities;
+@dynamic region;
+@dynamic result;
 
 @end
 
-@implementation RelatedEntity
+@implementation Region
 
 @dynamic idProp;
 @dynamic name;
-@dynamic aboutDescription;
-@dynamic versionProp;
-@dynamic isValidProp;
-@dynamic parent;
+@dynamic participants;
+
+@end
+
+@implementation Result
+
+@dynamic idProp;
+@dynamic count;
+@dynamic participant;
 
 @end
 
@@ -36,53 +39,48 @@
 - (instancetype)init {
   self = [super init];
   if (self != nil) {
-
     NSMutableArray *entities = [NSMutableArray new];
 
-    MD_DefineEntity(ParentEntity, ParentEntity, ParentEntity, ParentEntity,
-                    caf_identityId, , NSStringFromClass([self class]));
-    MD_DefineEntity(RelatedEntity, RelatedEntity, RelatedEntity, RelatedEntity,
-                    caf_identityId, , NSStringFromClass([self class]));
+    MD_DefineEntity(Participant, Participant, Participant, Participant, caf_identityId, , NSStringFromClass([self class]));
+    MD_DefineEntity(Region, Region, Region, Region, caf_identityId, , NSStringFromClass([self class]));
+    MD_DefineEntity(Result, Result, Result, Result, caf_identityId, , NSStringFromClass([self class]));
 
-    MD_BeginDeclarePropertiesForEntity(ParentEntity);
+    MD_BeginDeclarePropertiesForEntity(Participant);
     MD_AddAttribute(idProp, idProp, NSStringAttributeType, NO, );
     MD_AddAttribute(name, name, NSStringAttributeType, YES, );
-    MD_AddAttribute(aboutDescription, aboutDescription, NSStringAttributeType,
-                    YES, );
-    MD_AddAttribute(versionProp, versionProp, NSDoubleAttributeType, YES, );
-    MD_AddAttribute(isValidProp, isValidProp, NSBooleanAttributeType, YES, );
-    MD_AddRelationship(relatedEntities, relatedEntities, RelatedEntity,
-                       NSNullifyDeleteRule, YES, 0, , YES, parent);
-    MD_EndDeclarePropertiesForEntity(ParentEntity);
+    MD_AddRelationship(region, region, Region, NSNullifyDeleteRule, YES, 0, 1, YES, participants);
+    MD_AddRelationship(result, result, Result, NSNullifyDeleteRule, YES, 0, 1, YES, participant);
+    MD_EndDeclarePropertiesForEntity(Participant);
 
-    MD_BeginDeclarePropertiesForEntity(RelatedEntity);
+    MD_BeginDeclarePropertiesForEntity(Region);
     MD_AddAttribute(idProp, idProp, NSStringAttributeType, NO, );
     MD_AddAttribute(name, name, NSStringAttributeType, YES, );
-    MD_AddAttribute(aboutDescription, aboutDescription, NSStringAttributeType,
-                    YES, );
-    MD_AddAttribute(versionProp, versionProp, NSDoubleAttributeType, YES, );
-    MD_AddAttribute(isValidProp, isValidProp, NSBooleanAttributeType, YES, );
-    MD_AddRelationship(parent, parent, ParentEntity, NSNullifyDeleteRule, YES,
-                       0, 1, NO, relatedEntities);
-    MD_EndDeclarePropertiesForEntity(RelatedEntity);
+    MD_AddRelationship(participants, participants, Participant, NSNullifyDeleteRule, YES, 0, , YES, region);
+    MD_EndDeclarePropertiesForEntity(Region);
+
+    MD_BeginDeclarePropertiesForEntity(Result);
+    MD_AddAttribute(idProp, idProp, NSStringAttributeType, NO, );
+    MD_AddAttribute(count, count, NSInteger32AttributeType, YES, 0);
+    MD_AddRelationship(participant, participant, Participant, NSNullifyDeleteRule, YES, 0, 1, YES, result);
+    MD_EndDeclarePropertiesForEntity(Result);
 
     [self setEntities:entities];
-    [self setVersionIdentifiers:[NSSet setWithObject:NSStringFromClass(
-                                                         [self class])]];
+    [self setVersionIdentifiers:[NSSet setWithObject:NSStringFromClass([self class])]];
   }
   return self;
 }
 
 + (NSArray *)cachePolicies {
-  MDEntityCachePolicy *parentEntityCachePolicy = [MDEntityCachePolicy
-      entityCachePolicyWithEntityName:NSStringFromClass([ParentEntity class])
-                         durationDays:MDCachePolicyUnlimited
-                        durationHours:MDCachePolicyUnlimited];
-  MDEntityCachePolicy *relatedEntityCachePolicy = [MDEntityCachePolicy
-      entityCachePolicyWithEntityName:NSStringFromClass([RelatedEntity class])
-                         durationDays:MDCachePolicyUnlimited
-                        durationHours:MDCachePolicyUnlimited];
-  return @[ parentEntityCachePolicy, relatedEntityCachePolicy ];
+  MDEntityCachePolicy *participantEntityCachePolicy = [MDEntityCachePolicy entityCachePolicyWithEntityName:NSStringFromClass([Participant class])
+                                                                                              durationDays:MDCachePolicyUnlimited
+                                                                                             durationHours:MDCachePolicyUnlimited];
+  MDEntityCachePolicy *regionEntityCachePolicy = [MDEntityCachePolicy entityCachePolicyWithEntityName:NSStringFromClass([Region class])
+                                                                                         durationDays:MDCachePolicyUnlimited
+                                                                                        durationHours:MDCachePolicyUnlimited];
+  MDEntityCachePolicy *resultEntityCachePolicy = [MDEntityCachePolicy entityCachePolicyWithEntityName:NSStringFromClass([Result class])
+                                                                                         durationDays:MDCachePolicyUnlimited
+                                                                                        durationHours:MDCachePolicyUnlimited];
+  return @[ participantEntityCachePolicy, regionEntityCachePolicy, resultEntityCachePolicy ];
 }
 
 @end

@@ -10,28 +10,31 @@
 #import <MDCoreData/MDManagedObject.h>
 #import <MDCoreData/MDModelDefine.h>
 
-@class ParentEntity, RelatedEntity;
 @class MDEntityCachePolicy;
+@class Region, Participant, Result;
 
-@interface ParentEntity : MDManagedObject
+@interface Participant : MDManagedObject
 
 @property(nonatomic, strong) NSString *idProp;
 @property(nonatomic, strong) NSString *name;
-@property(nonatomic, strong) NSString *aboutDescription;
-@property(nonatomic, strong) NSNumber *versionProp;
-@property(nonatomic, strong) NSNumber *isValidProp;
-@property(nonatomic, strong) NSOrderedSet<RelatedEntity *> *relatedEntities;
+@property(nonatomic, strong) Region *region;
+@property(nonatomic, strong) Result *result;
 
 @end
 
-@interface RelatedEntity : MDManagedObject
+@interface Region : MDManagedObject
 
 @property(nonatomic, strong) NSString *idProp;
 @property(nonatomic, strong) NSString *name;
-@property(nonatomic, strong) NSString *aboutDescription;
-@property(nonatomic, strong) NSNumber *versionProp;
-@property(nonatomic, strong) NSNumber *isValidProp;
-@property(nonatomic, strong) ParentEntity *parent;
+@property(nonatomic, strong) NSOrderedSet<Participant *> *participants;
+
+@end
+
+@interface Result : MDManagedObject
+
+@property(nonatomic, strong) NSString *idProp;
+@property(nonatomic, strong) NSNumber *count;
+@property(nonatomic, strong) Participant *participant;
 
 @end
 

@@ -7,6 +7,8 @@
 //
 
 #import <MDCoreData/MDCoreData.h>
+#import "Constants.h"
+#import "LTHTTPClient.h"
 #import "TestDataProvider.h"
 #import "TestModel.h"
 #import "VotingService.h"
@@ -15,18 +17,25 @@ static NSString *const kTPLManagedRequestCallbackId = @"callbackId";
 
 @interface VotingService ()<MDRemoteStoreAuthenticationDelegate, MDFetchResponseReceiver>
 
-@property(nonatomic, strong) NSManagedObjectContext *childContext;
 @property(nonatomic, strong) TestDataProvider *provider;
 @property(nonatomic, strong) MDRemoteStore *remoteStore;
 @property(nonatomic, strong) MDRemoteStoreOptions *options;
 @property(nonatomic, strong) TestModel *model;
 @property(nonatomic, strong) MDManagedObjectContext *remoteContext;
 @property(nonatomic, strong) NSMutableDictionary *reqeustsCallbacks;
-@property(nonatomic, copy) void (^createStoreCompletionBlock)(NSError *error, BOOL isOfflineLogin);
+@property(nonatomic, copy) void (^createStoreCompletionBlock)(NSError *error, MDCredential *credential);
+@property(nonatomic, strong) MDCredential *credential;
 
 @end
 
 @implementation VotingService
+
+- (NSString *)generateUuidString {
+  CFUUIDRef uuid = CFUUIDCreate(kCFAllocatorDefault);
+  NSString *uuidString = (__bridge_transfer NSString *)CFUUIDCreateString(kCFAllocatorDefault, uuid);
+  CFRelease(uuid);
+  return uuidString;
+}
 
 + (VotingService *)sharedService {
   static VotingService *sharedService = nil;
@@ -37,18 +46,27 @@ static NSString *const kTPLManagedRequestCallbackId = @"callbackId";
   return sharedService;
 }
 
+- (instancetype)init {
+  self = [super init];
+  if (self != nil) {
+    self.reqeustsCallbacks = [NSMutableDictionary new];
+  }
+  return self;
+}
+
 #pragma mark - Public Interface
-- (void)createRemoteStoreWithUserName:(NSString *)userName password:(NSString *)password andCompletion:(void (^)(NSError *, BOOL))completion {
-  MDCredential *credential = nil;
+- (void)createRemoteStoreWithUserName:(NSString *)userName
+                             password:(NSString *)password
+                        andCompletion:(void (^)(NSError *, MDCredential *credential))completion {
   if (userName == nil || password == nil) {
-    credential = [MDCredential credentialWithDefaultUserAllowOfflineLogin:YES];
+    self.credential = [MDCredential credentialWithDefaultUserAllowOfflineLogin:YES];
   } else {
-    credential = [MDCredential credentialWithUser:userName password:password allowOfflineLogin:YES];
+    self.credential = [MDCredential credentialWithUser:userName password:password allowOfflineLogin:YES];
   }
   if (self.remoteStore != nil) {
     if ([self.remoteStore authenticated]) {
       if (completion != nil) {
-        completion(nil, [self.remoteStore isOfflineMode]);
+        completion(nil, nil);
       }
     } else {
       self.createStoreCompletionBlock = completion;
@@ -58,20 +76,67 @@ static NSString *const kTPLManagedRequestCallbackId = @"callbackId";
   }
   self.createStoreCompletionBlock = completion;
 
-  NSString *briefcaseModelPath = [[NSBundle mainBundle] pathForResource:@"BriefcaseModel" ofType:@"momd"];
-  NSURL *briefcaseModelURL = [NSURL fileURLWithPath:briefcaseModelPath];
   self.remoteStore = [[MDRemoteStore alloc] initWithStoreModel:self.model
-                                                      storeURL:[NSURL URLWithString:@"192.168.1.199:4000"]
-                                                          user:credential
-                                               persistentModel:[[NSManagedObjectModel alloc] initWithContentsOfURL:briefcaseModelURL]
+                                                      storeURL:[NSURL URLWithString:kServerPath]
+                                                          user:self.credential
+                                               persistentModel:nil
                                                        options:self.options];
   [self.remoteStore setEntityCachePolicies:[TestModel cachePolicies]];
   [self.remoteStore addCustomDataProvider:self.provider];
   [self.remoteStore setAuthenticationDelegate:self];
   [self.remoteStore authenticateManually];
   self.remoteContext = [self.remoteStore remoteStoreContext];
-  self.childContext = [[NSManagedObjectContext alloc] initWithConcurrencyType:NSPrivateQueueConcurrencyType];
-  [self.childContext setMergePolicy:NSMergeByPropertyObjectTrumpMergePolicy];
+}
+
+- (void)fetchPartcicipantsWithCompletion:(void (^)(NSError *error, NSArray<Participant *> *participants))completion {
+  NSString *callbackId = [self generateUuidString];
+  MDFetchRequest *partRequest = [MDFetchRequest fetchRequestWithCachePolicy:MDFetchRequestReloadIgnoringCacheData];
+  [partRequest setEntity:[NSEntityDescription entityForName:NSStringFromClass([Participant class]) inManagedObjectContext:[self remoteContext]]];
+  [partRequest setUserInfo:@{kTPLManagedRequestCallbackId : callbackId}];
+  [partRequest setReceiver:self];
+  [self.reqeustsCallbacks setObject:completion forKey:callbackId];
+  __weak typeof(self) weakSelf = self;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [weakSelf.remoteContext executeFetchRequest:partRequest];
+  });
+}
+
+- (void)fetchResultssWithCompletion:(void (^)(NSError *error, NSArray<Result *> *results))completion {
+  NSString *callbackId = [self generateUuidString];
+  MDFetchRequest *restulRequest = [MDFetchRequest fetchRequestWithCachePolicy:MDFetchRequestReloadIgnoringCacheData];
+  [restulRequest setEntity:[NSEntityDescription entityForName:NSStringFromClass([Result class]) inManagedObjectContext:[self remoteContext]]];
+  [restulRequest setUserInfo:@{ kTPLManagedRequestCallbackId : callbackId, @"all" : @(YES) }];
+  [restulRequest setReceiver:self];
+  [self.reqeustsCallbacks setObject:completion forKey:callbackId];
+  __weak typeof(self) weakSelf = self;
+  dispatch_async(dispatch_get_main_queue(), ^{
+    [weakSelf.remoteContext executeFetchRequest:restulRequest];
+  });
+}
+
+- (void)voteForParticipantWith:(Participant *)participant withCompletion:(void (^)(NSError *error))completion {
+  NSDictionary *body = @{ @"participantId" : participant.idProp, @"passportNumber" : self.credential.user };
+  [[LTHTTPClient sharedClient] POSTRequestOperationWithPath:@"/vote"
+      body:body
+      successBlock:^(AFHTTPRequestOperation *operation, id responseObject) {
+        NSDictionary *response = responseObject;
+        NSString *status = [response objectForKey:@"status"];
+        NSString *message = [response objectForKey:@"message"];
+        if ([status isEqualToString:@"OK"]) {
+          if (completion != nil) {
+            completion(nil);
+          }
+        } else {
+          if (completion != nil) {
+            completion([NSError errorWithDomain:@"VotingErrorDomain" code:-1 userInfo:@{NSLocalizedDescriptionKey : message}]);
+          }
+        }
+      }
+      failBlock:^(AFHTTPRequestOperation *operation, NSError *error) {
+        if (completion != nil) {
+          completion(error);
+        }
+      }];
 }
 
 #pragma mark - MDRemoteStoreAuthenticationDelegate
@@ -79,9 +144,8 @@ static NSString *const kTPLManagedRequestCallbackId = @"callbackId";
     authenticationSuccessForOfflineMode:(BOOL)offlineMode
                                response:(NSHTTPURLResponse *)response
                            responseData:(NSData *)data {
-  [self.childContext setParentContext:self.remoteContext];
   if (self.createStoreCompletionBlock != nil) {
-    self.createStoreCompletionBlock(nil, offlineMode);
+    self.createStoreCompletionBlock(nil, self.credential);
     self.createStoreCompletionBlock = nil;
   }
 }
@@ -91,7 +155,7 @@ static NSString *const kTPLManagedRequestCallbackId = @"callbackId";
                        response:(NSHTTPURLResponse *)response
                    responseData:(NSData *)data {
   if (self.createStoreCompletionBlock != nil) {
-    self.createStoreCompletionBlock(error, NO);
+    self.createStoreCompletionBlock(error, nil);
     self.createStoreCompletionBlock = nil;
   }
 }
@@ -107,33 +171,11 @@ static NSString *const kTPLManagedRequestCallbackId = @"callbackId";
     void (^callback)(NSError *error, NSArray<MDManagedObject *> *managedObjects) = nil;
     if (callbackId != nil) {
       callback = [self.reqeustsCallbacks objectForKey:callbackId];
-    }
-    __block NSError *updError = error;
-    __weak typeof(self) weakSelf = self;
-    [weakSelf.childContext performBlock:^{
-      NSArray *items = nil;
-      if (updError == nil && [[result items] count] > 0) {
-        NSArray *resultItems = [result items];
-        NSEntityDescription *entity = [[resultItems firstObject] entity];
-        NSArray *itemsIdsProp = [resultItems valueForKey:@"idProp"];
-
-        NSFetchRequest *childFetchRequest = [[NSFetchRequest alloc] init];
-        NSEntityDescription *childEntity = [NSEntityDescription entityForName:[entity name] inManagedObjectContext:weakSelf.childContext];
-        [childFetchRequest setEntity:childEntity];
-        [childFetchRequest setPredicate:[NSPredicate predicateWithFormat:@"%K IN %@", @"idProp", itemsIdsProp]];
-        items = [weakSelf.childContext executeFetchRequest:childFetchRequest error:&updError];
-        [weakSelf.childContext refreshAllObjects];
-        if (updError != nil) {
-          NSLog(@"Failed to execute fetch request from child context: %@", updError);
-        }
+      if (callback != nil) {
+        callback(error, result.items);
       }
-      dispatch_async(dispatch_get_main_queue(), ^{
-        if (callback != nil) {
-          callback(updError, items);
-          [weakSelf.reqeustsCallbacks removeObjectForKey:callbackId];
-        }
-      });
-    }];
+      [self.reqeustsCallbacks removeObjectForKey:callbackId];
+    }
   }
 }
 
@@ -141,12 +183,9 @@ static NSString *const kTPLManagedRequestCallbackId = @"callbackId";
 - (MDRemoteStoreOptions *)options {
   if (_options == nil) {
     _options = [MDRemoteStoreOptions remoteStoreOptions];
-    _options.checkHostAvailability = YES;
+    _options.checkHostAvailability = NO;
     _options.hostReachabilityType = MDHostReachabilityTypeNative;
     _options.communicationProtocol = MDRemoteStoreCommunicationProtocolCustom;
-    _options.authenticationMethod = @"POST";
-    _options.removeCacheIfExists = NO;
-    _options.authenticationFailStatusCode = 403;
   }
   return _options;
 }
@@ -160,7 +199,8 @@ static NSString *const kTPLManagedRequestCallbackId = @"callbackId";
 
 - (TestDataProvider *)provider {
   if (_provider == nil) {
-    _provider = [[TestDataProvider alloc] initWithEntityNames:@[ NSStringFromClass([ParentEntity class]), NSStringFromClass([RelatedEntity class]) ]];
+    _provider = [[TestDataProvider alloc]
+        initWithEntityNames:@[ NSStringFromClass([Participant class]), NSStringFromClass([Region class]), NSStringFromClass([Result class]) ]];
   }
   return _provider;
 }

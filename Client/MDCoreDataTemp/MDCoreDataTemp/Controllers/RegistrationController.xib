@@ -12,10 +12,12 @@
     <objects>
         <placeholder placeholderIdentifier="IBFilesOwner" id="-1" userLabel="File's Owner" customClass="RegistrationController">
             <connections>
+                <outlet property="activityIndicator" destination="E1F-lk-oKv" id="aWp-Ug-x4R"/>
                 <outlet property="bkgImageView" destination="hYM-3h-ARf" id="lPH-3b-h5T"/>
                 <outlet property="logInBtn" destination="Scy-xt-Ygw" id="hbi-pm-FTt"/>
                 <outlet property="passwordTF" destination="huP-Ks-Ydd" id="c9P-tn-rpK"/>
                 <outlet property="rememberBtn" destination="mV6-nx-NXF" id="kuw-ju-0ps"/>
+                <outlet property="scrollView" destination="v4G-hI-zNX" id="yL8-NX-uIQ"/>
                 <outlet property="signUpBtn" destination="UFY-Mk-0lp" id="9CA-E1-xGY"/>
                 <outlet property="signUpContainerView" destination="0dw-Cs-NHK" id="7qZ-B7-xpI"/>
                 <outlet property="usernameTF" destination="XoH-yb-mL8" id="rgy-Q3-fBy"/>
@@ -34,6 +36,14 @@
                 <imageView userInteractionEnabled="NO" alpha="0.94999999999999996" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="bkg" translatesAutoresizingMaskIntoConstraints="NO" id="hYM-3h-ARf">
                     <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                 </imageView>
+                <activityIndicatorView hidden="YES" opaque="NO" contentMode="scaleToFill" horizontalHuggingPriority="750" verticalHuggingPriority="750" hidesWhenStopped="YES" style="white" translatesAutoresizingMaskIntoConstraints="NO" id="E1F-lk-oKv">
+                    <rect key="frame" x="169.5" y="315.5" width="35" height="35"/>
+                    <constraints>
+                        <constraint firstAttribute="height" constant="35" id="IIb-8B-eR2"/>
+                        <constraint firstAttribute="width" constant="35" id="wcf-JN-QAq"/>
+                    </constraints>
+                    <color key="color" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                </activityIndicatorView>
                 <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" translatesAutoresizingMaskIntoConstraints="NO" id="v4G-hI-zNX" customClass="TPKeyboardAvoidingScrollView">
                     <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                     <subviews>
@@ -265,6 +275,8 @@
                 <constraint firstItem="jx3-JP-Vod" firstAttribute="height" secondItem="i5M-Pr-FkT" secondAttribute="height" id="Jib-J2-nyb"/>
                 <constraint firstItem="v4G-hI-zNX" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="MBN-Za-IgF"/>
                 <constraint firstItem="hYM-3h-ARf" firstAttribute="leading" secondItem="i5M-Pr-FkT" secondAttribute="leading" id="N5l-1S-PuR"/>
+                <constraint firstItem="E1F-lk-oKv" firstAttribute="centerY" secondItem="i5M-Pr-FkT" secondAttribute="centerY" id="ewJ-jR-8yb"/>
+                <constraint firstItem="E1F-lk-oKv" firstAttribute="centerX" secondItem="i5M-Pr-FkT" secondAttribute="centerX" id="fKD-Q9-Edk"/>
                 <constraint firstAttribute="bottom" secondItem="hYM-3h-ARf" secondAttribute="bottom" id="hqh-LG-vfN"/>
                 <constraint firstAttribute="trailing" secondItem="hYM-3h-ARf" secondAttribute="trailing" id="i6p-pi-KtM"/>
                 <constraint firstItem="jx3-JP-Vod" firstAttribute="width" secondItem="i5M-Pr-FkT" secondAttribute="width" id="zFb-YJ-5Gu"/>

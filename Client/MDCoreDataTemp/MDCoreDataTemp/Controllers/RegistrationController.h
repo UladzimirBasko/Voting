@@ -10,4 +10,6 @@
 
 @interface RegistrationController : UIViewController
 
+@property(nonatomic, copy) void (^didLoginBlock)();
+
 @end
